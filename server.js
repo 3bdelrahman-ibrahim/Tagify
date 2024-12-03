@@ -23,6 +23,23 @@ mongoose.connect(process.env.MONGO_URI, {
 app.get('/api/welcome', (req, res) => {
   res.send('Welcome to API Version 2');
 });
+// Get User by ID (GET)
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Find the user by ID
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).send('Error retrieving user: ' + error.message);
+  }
+});
 
 // User Creation Route (POST)
 app.post('/api/users', async (req, res) => {
