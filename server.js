@@ -19,7 +19,7 @@ mongoose.connect('mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.log('Error connecting to MongoDB:', err));
 
-// API Version 2 Route
+// API Version 2 Routes
 app.get('/api/welcome', (req, res) => {
   res.send('Welcome to API Version 2');
 });
