@@ -12,7 +12,7 @@ dotenv.config();
 app.use(express.json());
 
 // MongoDB connection using environment variable
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect('mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
