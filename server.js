@@ -23,6 +23,8 @@ mongoose.connect(process.env.MONGO_URI, {
 app.get('/api/welcome', (req, res) => {
   res.send('Welcome to API Version 2');
 });
+
+// MongoDB Connection Status Route
 app.get('/api/mongo-status', (req, res) => {
   // Check if mongoose is connected
   if (mongoose.connection.readyState === 1) {
@@ -33,10 +35,10 @@ app.get('/api/mongo-status', (req, res) => {
     res.status(500).send('mongo false');
   }
 });
+
 // Get All Users (GET)
 app.get('/api/users', async (req, res) => {
   try {
-    // Find all users
     const users = await User.find();
 
     if (users.length === 0) {
@@ -59,7 +61,6 @@ app.get('/api/users/:id', async (req, res) => {
       return res.status(400).send('Invalid user ID format');
     }
 
-    // Find the user by ID
     const user = await User.findById(userId);
 
     if (!user) {
