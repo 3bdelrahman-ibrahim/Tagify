@@ -13,8 +13,6 @@ app.use(express.json());
 
 // MongoDB connection using environment variable
 mongoose.connect('mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
 })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.log('Error connecting to MongoDB:', err));
