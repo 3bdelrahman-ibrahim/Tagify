@@ -1,7 +1,6 @@
-// server.js
 const express = require('express');
 const mongoose = require('mongoose');
-const dotenv = require('dotenv');
+const dotenv = require('dotenv'); // Import dotenv
 const User = require('./models/User');
 const app = express();
 
@@ -12,7 +11,9 @@ dotenv.config();
 app.use(express.json());
 
 // MongoDB connection using environment variable
-mongoose.connect('mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', {
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
 })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => console.log('Error connecting to MongoDB:', err));
@@ -24,13 +25,10 @@ app.get('/api/welcome', (req, res) => {
 
 // MongoDB Connection Status Route
 app.get('/api/mongo-status', (req, res) => {
-  // Check if mongoose is connected
   if (mongoose.connection.readyState === 1) {
-    // 1 means connected
-    res.status(200).send('mongo true');
+    res.status(200).send('MongoDB is connected');
   } else {
-    // Any other state means not connected
-    res.status(500).send('mongo false');
+    res.status(500).send('MongoDB is not connected');
   }
 });
 
