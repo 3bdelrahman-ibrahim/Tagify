@@ -10,7 +10,7 @@ dotenv.config();
 // Middleware to parse JSON requests
 app.use(express.json());
 
-// MongoDB connection using environment variable
+// MongoDB connection using environmssent variable
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
