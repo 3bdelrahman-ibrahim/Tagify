@@ -1,74 +1,18 @@
-
-// File: server.js
 const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-require('dotenv').config();
-
 const app = express();
+const port = 3000;
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-
-// MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((err) => console.error('MongoDB connection error:', err));
-
-// Routes
-app.use('/api/users', require('./routes/users'));
-
-// Basic route
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the API' });
+// API Version 1 Route
+app.get('/api/v1/welcome', (req, res) => {
+  res.send('Welcome to API Version 1');
 });
 
-// Handle 404 errors
-app.use((req, res) => {
-  res.status(404).json({ 
-    error: 'Not Found',
-    availableRoutes: [
-      {
-        path: '/',
-        method: 'GET',
-        description: 'Welcome message'
-      },
-      {
-        path: '/sad',
-        method: 'GET',
-        description: 'Welcome message'
-      },
-      {
-        path: '/api/users',
-        method: 'GET',
-        description: 'Get all users'
-      },
-      {
-        path: '/api/users/:id',
-        method: 'GET',
-        description: 'Get user by ID'
-      },
-      {
-        path: '/api/users',
-        method: 'POST',
-        description: 'Create new user'
-      },
-      {
-        path: '/api/users/:id',
-        method: 'PUT',
-        description: 'Update user'
-      },
-      {
-        path: '/api/users/:id',
-        method: 'DELETE',
-        description: 'Delete user'
-      }
-    ]
-  });
+// API Version 2 Route
+app.get('/api/v2/welcome', (req, res) => {
+  res.send('Welcome to API Version 2');
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-   console.log('Server is running on http://localhost:3000');
-    });
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
