@@ -23,10 +23,15 @@ mongoose.connect(process.env.MONGO_URI, {
 app.get('/api/welcome', (req, res) => {
   res.send('Welcome to API Version 2');
 });
+
 // Get User by ID (GET)
 app.get('/api/users/:id', async (req, res) => {
   try {
     const userId = req.params.id;
+
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).send('Invalid user ID format');
+    }
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -37,7 +42,8 @@ app.get('/api/users/:id', async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    res.status(400).send('Error retrieving user: ' + error.message);
+    console.log(error);
+    res.status(500).send('Error retrieving user: ' + error.message);
   }
 });
 
@@ -46,6 +52,10 @@ app.post('/api/users', async (req, res) => {
   try {
     const { name, email, password } = req.body;
     
+    if (!name || !email || !password) {
+      return res.status(400).send('Name, email, and password are required');
+    }
+
     const newUser = new User({
       name,
       email,
@@ -55,7 +65,8 @@ app.post('/api/users', async (req, res) => {
     await newUser.save();
     res.status(201).send('User created successfully');
   } catch (error) {
-    res.status(400).send('Error creating user: ' + error.message);
+    console.log(error);
+    res.status(500).send('Error creating user: ' + error.message);
   }
 });
 
