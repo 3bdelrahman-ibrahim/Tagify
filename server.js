@@ -23,7 +23,16 @@ mongoose.connect(process.env.MONGO_URI, {
 app.get('/api/welcome', (req, res) => {
   res.send('Welcome to API Version 2');
 });
-
+app.get('/api/mongo-status', (req, res) => {
+  // Check if mongoose is connected
+  if (mongoose.connection.readyState === 1) {
+    // 1 means connected
+    res.status(200).send('mongo true');
+  } else {
+    // Any other state means not connected
+    res.status(500).send('mongo false');
+  }
+});
 // Get All Users (GET)
 app.get('/api/users', async (req, res) => {
   try {
