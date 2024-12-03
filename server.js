@@ -24,6 +24,23 @@ app.get('/api/welcome', (req, res) => {
   res.send('Welcome to API Version 2');
 });
 
+// Get All Users (GET)
+app.get('/api/users', async (req, res) => {
+  try {
+    // Find all users
+    const users = await User.find();
+
+    if (users.length === 0) {
+      return res.status(404).send('No users found');
+    }
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('Error retrieving users: ' + error.message);
+  }
+});
+
 // Get User by ID (GET)
 app.get('/api/users/:id', async (req, res) => {
   try {
