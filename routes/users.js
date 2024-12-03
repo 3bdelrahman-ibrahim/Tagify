@@ -66,4 +66,24 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+router.get('/Welcome', async (req, res) => {
+  try {
+    res.status(200).send('Welcome to Node.js!');
+  } catch (err) {
+    res.status(500).send('Internal Server Error');
+  }
+});
+
+const http = require('http');
+
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Welcome to Node.js!');
+});
+
+server.listen(3000, () => {
+  console.log('Server is running on http://localhost:3000');
+});
+
+
 module.exports = router;

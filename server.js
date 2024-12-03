@@ -35,6 +35,11 @@ app.use((req, res) => {
         description: 'Welcome message'
       },
       {
+        path: '/sad',
+        method: 'GET',
+        description: 'Welcome message'
+      },
+      {
         path: '/api/users',
         method: 'GET',
         description: 'Get all users'
