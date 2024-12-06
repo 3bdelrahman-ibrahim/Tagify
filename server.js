@@ -131,17 +131,22 @@ app.get('/api/welcome', (req, res) => {
 });
 
 // MongoDB Connection Status Route
-app.get('/api/mongo-status', (req, res) => {
+app.get('/api/mongo-status', async (req, res) => {
   try {
+    console.log('Checking MongoDB status...');
+    await connectToDatabase();
+    console.log('Connection state:', mongoose.connection.readyState);
     if (mongoose.connection.readyState === 1) {
       res.status(200).send('MongoDB is connected');
     } else {
       res.status(500).send('MongoDB is not connected');
     }
   } catch (err) {
+    console.error('Error:', err);
     res.status(500).send('Error checking MongoDB status');
   }
 });
+
 
 // General error handler
 app.use((err, req, res, next) => {
