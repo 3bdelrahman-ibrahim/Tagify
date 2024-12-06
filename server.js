@@ -129,6 +129,14 @@ app.get('/api/welcome', (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+let isConnected = false;
+
+async function connectToDatabase() {
+  if (!isConnected) {
+    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+    isConnected = mongoose.connection.readyState === 1;
+  }
+}
 
 // MongoDB Connection Status Route
 app.get('/api/mongo-status', async (req, res) => {
