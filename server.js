@@ -140,6 +140,8 @@ async function connectToDatabase() {
 
 // MongoDB Connection Status Route
 app.get('/api/mongo-status', async (req, res) => {
+    console.log('MongoDB URI:', process.env.MONGO_URI);
+
   try {
     if (mongoose.connection.readyState === 1) {
       res.status(200).send('MongoDB is connected');
@@ -149,7 +151,7 @@ app.get('/api/mongo-status', async (req, res) => {
   } catch (err) {
     console.error('Connection Error:', err);
     res.status(500).send({ 
-      message: 'Error checking MongoDB status', 
+      message: process.env.MONGO_URI, 
       error: err.message 
     });
   }
