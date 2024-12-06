@@ -141,17 +141,20 @@ async function connectToDatabase() {
 // MongoDB Connection Status Route
 app.get('/api/mongo-status', async (req, res) => {
   try {
-    await connectToDatabase();
     if (mongoose.connection.readyState === 1) {
       res.status(200).send('MongoDB is connected');
     } else {
-      res.status(500).send('MongoDB is not connected');
+      throw new Error('MongoDB is not connected');
     }
   } catch (err) {
-    console.error('MongoDB connection error:', err);
-    res.status(500).send('MongoDB connection error:', err);
+    console.error('Connection Error:', err);
+    res.status(500).send({ 
+      message: 'Error checking MongoDB status', 
+      error: err.message 
+    });
   }
 });
+
 
 
 
