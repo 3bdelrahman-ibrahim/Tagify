@@ -1,16 +1,13 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-
-dotenv.config(); // Make sure to load environment variables
-
+ 
 const app = express();
 
 // Middleware to parse JSON requests
 app.use(express.json());
 
 // MongoDB connection using environment variable
-mongoose.connect(process.env.MONGO_URI, {
+mongoose.connect( 'mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -33,7 +30,7 @@ let isConnected = false;
 
 async function connectToDatabase() {
   if (!isConnected) {
-    await mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true });
+    await mongoose.connect('mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
     isConnected = mongoose.connection.readyState === 1;
   }
 }
@@ -43,7 +40,7 @@ app.get('/api/mongo-status', async (req, res) => {
   try {
     // Reconnect if not connected
     if (mongoose.connection.readyState === 0) {
-      await mongoose.connect(process.env.MONGO_URI, {
+      await mongoose.connect('mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       });
