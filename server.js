@@ -99,9 +99,10 @@
 // });
 
 
-const express = require('express');
-const mongoose = require('mongoose');
-const dotenv = require('dotenv'); 
+import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
 const app = express();
 
 // Load environment variables from .env file
@@ -129,6 +130,7 @@ app.get('/api/welcome', (req, res) => {
     res.status(500).send('Internal Server Error');
   }
 });
+
 let isConnected = false;
 
 async function connectToDatabase() {
@@ -165,11 +167,6 @@ app.get('/api/mongo-status', async (req, res) => {
     });
   }
 });
-
-
-
-
-
 
 // General error handler
 app.use((err, req, res, next) => {
