@@ -1,21 +1,36 @@
+// File: server.js
 import express from 'express';
 import mongoose from 'mongoose';
- 
+
 const app = express();
 
 // Middleware to parse JSON requests
 app.use(express.json());
 
 // MongoDB connection using environment variable
-mongoose.connect( 'mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+mongoose
+  .connect('mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log('Connected to MongoDB'))
   .catch((err) => {
     console.error('Error connecting to MongoDB:', err);
     process.exit(1); // Exit the process if the connection fails
   });
+
+// Mongoose User schema and model
+const userSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  age: { type: Number },
+  profile: {
+    bio: { type: String },
+    socialLinks: { type: [String] },
+  },
+}, { timestamps: true });
+
+const User = mongoose.model('User', userSchema);
 
 // API Version 2 Routes
 app.get('/api/welcome', (req, res) => {
@@ -26,19 +41,9 @@ app.get('/api/welcome', (req, res) => {
   }
 });
 
-let isConnected = false;
-
-async function connectToDatabase() {
-  if (!isConnected) {
-    await mongoose.connect('mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', { useNewUrlParser: true, useUnifiedTopology: true });
-    isConnected = mongoose.connection.readyState === 1;
-  }
-}
-
 // MongoDB Connection Status Route
 app.get('/api/mongo-status', async (req, res) => {
   try {
-    // Reconnect if not connected
     if (mongoose.connection.readyState === 0) {
       await mongoose.connect('mongodb+srv://3bdelrahmanibrahim:kGoy8SIisGBX2OLa@tagify.jxpsa.mongodb.net/', {
         useNewUrlParser: true,
@@ -62,6 +67,109 @@ app.get('/api/mongo-status', async (req, res) => {
     });
   }
 });
+// Get a single user by ID and render an HTML page
+app.get('/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).send('<h1>User not found</h1>');
+    }
+    // Render an HTML page with user data
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Details</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 2rem; }
+          .container { max-width: 600px; margin: auto; padding: 1rem; border: 1px solid #ccc; border-radius: 5px; }
+          h1 { color: #333; }
+          p { margin: 0.5rem 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1>User Details</h1>
+          <p><strong>Name:</strong> ${user.name}</p>
+          <p><strong>Email:</strong> ${user.email}</p>
+          <p><strong>Age:</strong> ${user.age || 'Not Provided'}</p>
+          <h2>Profile</h2>
+          <p><strong>Bio:</strong> ${user.profile?.bio || 'No bio available'}</p>
+          <p><strong>Social Links:</strong></p>
+          <ul>
+            ${user.profile?.socialLinks?.map(link => `<li><a href="${link}" target="_blank">${link}</a></li>`).join('') || '<li>No social links available</li>'}
+          </ul>
+        </div>
+      </body>
+      </html>
+    `);
+  } catch (err) {
+    res.status(500).send('<h1>Internal Server Error</h1>');
+  }
+});
+
+// CRUD Routes for Users
+// Create a new user
+app.post('/api/users', async (req, res) => {
+  try {
+    const user = new User(req.body);
+    await user.save();
+    res.status(201).send(user);
+  } catch (err) {
+    res.status(400).send({ message: 'Error creating user', error: err.message });
+  }
+});
+
+// Get all users
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.find();
+    res.status(200).send(users);
+  } catch (err) {
+    res.status(500).send({ message: 'Error fetching users', error: err.message });
+  }
+});
+
+// Get a single user by ID
+app.get('/api/users/:id', async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    res.status(200).send(user);
+  } catch (err) {
+    res.status(500).send({ message: 'Error fetching user', error: err.message });
+  }
+});
+
+// Update a user by ID
+app.put('/api/users/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    res.status(200).send(user);
+  } catch (err) {
+    res.status(400).send({ message: 'Error updating user', error: err.message });
+  }
+});
+
+// Delete a user by ID
+app.delete('/api/users/:id', async (req, res) => {
+  try {
+    const user = await User.findByIdAndDelete(req.params.id);
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    res.status(200).send({ message: 'User deleted successfully' });
+  } catch (err) {
+    res.status(500).send({ message: 'Error deleting user', error: err.message });
+  }
+});
 
 // General error handler
 app.use((err, req, res, next) => {
@@ -69,10 +177,10 @@ app.use((err, req, res, next) => {
   res.status(500).send('Something went wrong!');
 });
 
+// Start the server
 app.listen(3000, () => {
   console.log('Server is running on port 3000');
 });
-
 
 // // const express = require('express');
 // // const mongoose = require('mongoose');
