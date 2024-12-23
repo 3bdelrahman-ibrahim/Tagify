@@ -133,7 +133,7 @@ app.get('/:id', async (req, res) => {
                                 ${link}
                             </a>
                         `).join('')
-                        : '<p class="text-gray-500">No social links available</p>'
+                        : '<p class="text-gray-500">No social links available.</p>'
                     }
                 </div>
             </div>
