@@ -68,47 +68,49 @@ app.get('/api/mongo-status', async (req, res) => {
   }
 });
 // Get a single user by ID and render an HTML page
-app.get('/:id', async (req, res) => {
-  try {
-    const user = await User.findById(req.params.id);
-    if (!user) {
-      return res.status(404).send('<h1>User not found</h1>');
-    }
-    // Render an HTML page with user data
-    res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>User Details</title>
-        <style>
-          body { font-family: Arial, sans-serif; margin: 2rem; }
-          .container { max-width: 600px; margin: auto; padding: 1rem; border: 1px solid #ccc; border-radius: 5px; }
-          h1 { color: #333; }
-          p { margin: 0.5rem 0; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <h1>User Details</h1>
-          <p><strong>Name:</strong> ${user.name}</p>
-          <p><strong>Email:</strong> ${user.email}</p>
-          <p><strong>Age:</strong> ${user.age || 'Not Provided'}</p>
-          <h2>Profile</h2>
-          <p><strong>Bio:</strong> ${user.profile?.bio || 'No bio available'}</p>
-          <p><strong>Social Links:</strong></p>
-          <ul>
-            ${user.profile?.socialLinks?.map(link => `<li><a href="${link}" target="_blank">${link}</a></li>`).join('') || '<li>No social links available</li>'}
-          </ul>
-        </div>
-      </body>
-      </html>
-    `);
-  } catch (err) {
-    res.status(500).send('<h1>Internal Server Error</h1>');
-  }
-});
+// app.get('/:id', async (req, res) => {
+//   try {
+//     const user = await User.findById(req.params.id);
+//     if (!user) {
+//       return res.status(404).send('<h1>User not found</h1>');
+//     }
+//     // Render an HTML page with user data
+//     res.send(`
+//       <!DOCTYPE html>
+//       <html lang="en">
+//       <head>
+//         <meta charset="UTF-8">
+//         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+//         <title>User Details</title>
+//         <style>
+//           body { font-family: Arial, sans-serif; margin: 2rem; }
+//           .container { max-width: 600px; margin: auto; padding: 1rem; border: 1px solid #ccc; border-radius: 5px; }
+//           h1 { color: #333; }
+//           p { margin: 0.5rem 0; }
+//         </style>
+//       </head>
+//       <body>
+//         <div class="container">
+//           <h1>User Details</h1>
+//           <p><strong>Name:</strong> ${user.name}</p>
+//           <p><strong>Email:</strong> ${user.email}</p>
+//           <p><strong>Age:</strong> ${user.age || 'Not Provided'}</p>
+//           <h2>Profile</h2>
+//           <p><strong>Bio:</strong> ${user.profile?.bio || 'No bio available'}</p>
+//           <p><strong>Social Links:</strong></p>
+//           <ul>
+//             ${user.profile?.socialLinks?.map(link => `<li><a href="${link}" target="_blank">${link}</a></li>`).join('') || '<li>No social links available</li>'}
+//           </ul>
+//         </div>
+//       </body>
+//       </html>
+//     `);
+//   } catch (err) {
+//     res.status(500).send('<h1>Internal Server Error</h1>');
+//   }
+// });
+
+router.get('/:id', userController.getUserById);
 
 // CRUD Routes for Users
 // Create a new user
